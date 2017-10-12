@@ -77,11 +77,14 @@ class LogParser {
 
     Optional<RelevantStep> getMatchingRegex(String value) {
         for (RelevantStep step : relevantSteps) {
-            if (step.pattern.matcher(value).matches()) {
+            def matcher = step.pattern.matcher(value)
+            if (matcher.matches()) {
+                def newlabel = matcher.replaceAll(step.label)
+                def newstep = new RelevantStep(step.pattern, newlabel, step.onlyFirstMatch)
                 if (step.onlyFirstMatch) {
                     relevantSteps.remove(step)
                 }
-                return Optional.of(step)
+                return Optional.of(newstep)
             }
         }
         return Optional.absent()
